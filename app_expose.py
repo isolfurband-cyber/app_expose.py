@@ -28,6 +28,16 @@ def fmt(val):
     return f"{val:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
+# Hilfsfunktion um Text-Eingaben mit Komma sicher in Float umzuwandeln
+def parse_de_float(val_str, default=0.0):
+    try:
+        # Leerzeichen entfernen und Komma durch Punkt ersetzen für Python-Berechnung
+        cleaned = val_str.strip().replace(".", "").replace(",", ".")
+        return float(cleaned)
+    except ValueError:
+        return default
+
+
 # --- PDF GENERIERUNGS-FUNKTION ---
 
 
@@ -198,26 +208,18 @@ with st.form("expose_form"):
             "Anzahl Räume", min_value=1, max_value=10, value=2
         )
     with col5:
-        qm = st.number_input(
-            "Wohnfläche in m²", min_value=10.0, value=45.0, format="%.2f"
-        )
+        qm_input = st.text_input("Wohnfläche in m²", value="45,00")
 
     st.subheader("3. Finanzielle Angaben (Miete, Nebenkosten & Kaution)")
     col6, col7, col8, col9 = st.columns(4)
     with col6:
-        kaltmiete = st.number_input(
-            "Nettokaltmiete (€)", value=220.0, format="%.2f"
-        )
+        kaltmiete_input = st.text_input("Nettokaltmiete (€)", value="220,00")
     with col7:
-        kalte_bk = st.number_input(
-            "Kalte Betriebskosten (€)", value=80.0, format="%.2f"
-        )
+        kalte_bk_input = st.text_input("Kalte Betriebskosten (€)", value="80,00")
     with col8:
-        heizkosten = st.number_input(
-            "Heizkosten (€)", value=70.0, format="%.2f"
-        )
+        heizkosten_input = st.text_input("Heizkosten (€)", value="70,00")
     with col9:
-        kaution = st.number_input("Kaution (€)", value=660.0, format="%.2f")
+        kaution_input = st.text_input("Kaution (€)", value="660,00")
 
     st.subheader("4. Heizungsart (für Richtwert-Check)")
     energietraeger = st.selectbox(
@@ -230,6 +232,13 @@ with st.form("expose_form"):
     )
 
 if submitted:
+    # Umwandlung der Komma-Eingaben in Zahlen für die Logik
+    qm = parse_de_float(qm_input, 45.0)
+    kaltmiete = parse_de_float(kaltmiete_input, 220.0)
+    kalte_bk = parse_de_float(kalte_bk_input, 80.0)
+    heizkosten = parse_de_float(heizkosten_input, 70.0)
+    kaution = parse_de_float(kaution_input, 660.0)
+
     # Berechnungen
     bruttokalt = kaltmiete + kalte_bk
     bruttowarm = bruttokalt + heizkosten
