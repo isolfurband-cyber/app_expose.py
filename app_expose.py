@@ -24,7 +24,7 @@ WEITERE_PERSON_BETRAG = 109.35
 
 # Richtwerte Heizkosten (Höchstwerte je m² angemessener Wohnfläche laut Bundesheizspiegel in der Richtlinie)
 HEIZKOSTEN_RICHTWERTE = {
-    "Erdgas": 23.21,  # EUR pro m² im Jahr (Kategorie 80-150 m²)
+    "Erdgas": 23.21,
     "Fernwärme": 32.51,
     "Heizöl": 26.11,
     "Wärmepumpe": 21.11,
@@ -81,12 +81,7 @@ def generate_pdf(
     )
 
     c.setFont("Helvetica", 10)
-    c.drawString(
-        50,
-        height - 165,
-        "Sehr geehrte Damen und Herren,",
-        suppress_warnings=True,
-    )
+    c.drawString(50, height - 165, "Sehr geehrte Damen und Herren,")
     c.drawString(
         50,
         height - 180,
