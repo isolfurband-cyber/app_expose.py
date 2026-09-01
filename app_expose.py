@@ -86,7 +86,7 @@ def generate_pdf(
         "für den oben genannten Mietinteressenten bieten wir hiermit folgende Mietwohnung an:",
     )
 
-    # Box mit Objektdaten (Korrigierte Höhe und Platzierung, damit nichts überlappt)
+    # Box mit Objektdaten
     c.rect(50, height - 325, width - 100, 115)
     c.setFont("Helvetica-Bold", 10)
     c.drawString(70, height - 205, "Objektdaten & Anschrift:")
@@ -198,18 +198,26 @@ with st.form("expose_form"):
             "Anzahl Räume", min_value=1, max_value=10, value=2
         )
     with col5:
-        qm = st.number_input("Wohnfläche in m²", min_value=10.0, value=45.0)
+        qm = st.number_input(
+            "Wohnfläche in m²", min_value=10.0, value=45.0, format="%.2f"
+        )
 
     st.subheader("3. Finanzielle Angaben (Miete, Nebenkosten & Kaution)")
     col6, col7, col8, col9 = st.columns(4)
     with col6:
-        kaltmiete = st.number_input("Nettokaltmiete (€)", value=220.0)
+        kaltmiete = st.number_input(
+            "Nettokaltmiete (€)", value=220.0, format="%.2f"
+        )
     with col7:
-        kalte_bk = st.number_input("Kalte Betriebskosten (€)", value=80.0)
+        kalte_bk = st.number_input(
+            "Kalte Betriebskosten (€)", value=80.0, format="%.2f"
+        )
     with col8:
-        heizkosten = st.number_input("Heizkosten (€)", value=70.0)
+        heizkosten = st.number_input(
+            "Heizkosten (€)", value=70.0, format="%.2f"
+        )
     with col9:
-        kaution = st.number_input("Kaution (€)", value=660.0)
+        kaution = st.number_input("Kaution (€)", value=660.0, format="%.2f")
 
     st.subheader("4. Heizungsart (für Richtwert-Check)")
     energietraeger = st.selectbox(
