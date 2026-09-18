@@ -62,12 +62,15 @@ def generate_pdf(
     c = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
 
-    # Logo oben links einfügen (falls vorhanden)
+    # Logo oben links einfügen (sucht nach logo.png oder kare_logo.png im Repository)
     logo_path = "logo.png"
-    if os.path.exists(logo_path):
-        c.drawImage(logo_path, 50, height - 50, width=110, height=35, preserveAspectRatio=True, mask='auto')
+    if not os.path.exists(logo_path) and os.path.exists("kare_logo.png"):
+        logo_path = "kare_logo.png"
 
-    # Briefkopf / Absender-Text rechts daneben / darunter
+    if os.path.exists(logo_path):
+        c.drawImage(logo_path, 50, height - 52, width=110, height=35, preserveAspectRatio=True, mask='auto')
+
+    # Briefkopf / Absender-Text rechts daneben
     c.setFont("Helvetica-Bold", 9)
     c.drawString(
         170,
@@ -75,77 +78,77 @@ def generate_pdf(
         "KARE-Immobilien | Talstr. 32 | 07545 Gera | Tel.: 0365 / 800 49 37",
     )
     c.setLineWidth(1)
-    c.line(50, height - 55, width - 50, height - 55)
+    c.line(50, height - 60, width - 50, height - 60)
 
     # Empfänger (Jobcenter)
     c.setFont("Helvetica", 10)
-    c.drawString(50, height - 80, "An das")
-    c.drawString(50, height - 95, "Jobcenter Gera")
-    c.drawString(50, height - 110, "Leistungsabteilung / Unterkunft")
+    c.drawString(50, height - 85, "An das")
+    c.drawString(50, height - 100, "Jobcenter Gera")
+    c.drawString(50, height - 115, "Leistungsabteilung / Unterkunft")
 
     # Datum
     aktuelles_datum = datetime.now().strftime("%d.%m.%Y")
-    c.drawRightString(width - 50, height - 80, f"Gera, den {aktuelles_datum}")
+    c.drawRightString(width - 50, height - 85, f"Gera, den {aktuelles_datum}")
 
     # Titel
     c.setFont("Helvetica-Bold", 13)
     c.drawString(
-        50, height - 145, "Mietangebot / Wohnungsexpose' zur Vorlage beim Jobcenter"
+        50, height - 150, "Mietangebot / Wohnungsexpose' zur Vorlage beim Jobcenter"
     )
 
     c.setFont("Helvetica", 10)
-    c.drawString(50, height - 170, "Sehr geehrte Damen und Herren,")
+    c.drawString(50, height - 175, "Sehr geehrte Damen und Herren,")
     
     # Text mit Mietername
     mieter_text = mieter_name if mieter_name.strip() else "[Name des Mieters]"
     c.drawString(
         50,
-        height - 185,
+        height - 190,
         f"für den Mietinteressenten {mieter_text} bieten wir hiermit folgende Mietwohnung an:",
     )
 
     # Box mit Objektdaten
-    c.rect(50, height - 345, width - 100, 130)
+    c.rect(50, height - 350, width - 100, 130)
     c.setFont("Helvetica-Bold", 10)
-    c.drawString(70, height - 210, "Objektdaten & Interessent:")
+    c.drawString(70, height - 215, "Objektdaten & Interessent:")
     c.setFont("Helvetica", 10)
-    c.drawString(70, height - 230, f"Mietinteressent(in): {mieter_text}")
+    c.drawString(70, height - 235, f"Mietinteressent(in): {mieter_text}")
     c.drawString(
-        70, height - 250, f"Straße & Hausnummer: {strasse} {hausnummer}"
+        70, height - 255, f"Straße & Hausnummer: {strasse} {hausnummer}"
     )
-    c.drawString(70, height - 270, f"Ort: {plz_ort}")
+    c.drawString(70, height - 275, f"Ort: {plz_ort}")
     c.drawString(
-        70, height - 290, f"Wohnungsgröße: {fmt(qm)} m² ({raeume} Räume)"
+        70, height - 295, f"Wohnungsgröße: {fmt(qm)} m² ({raeume} Räume)"
     )
-    c.drawString(70, height - 310, f"Haushaltsgröße: {personen} Person(en)")
+    c.drawString(70, height - 315, f"Haushaltsgröße: {personen} Person(en)")
 
     # Finanzielle Details & Angemessenheit
     c.setFont("Helvetica-Bold", 10)
-    c.drawString(50, height - 370, "Kosten der Unterkunft (KdU):")
+    c.drawString(50, height - 375, "Kosten der Unterkunft (KdU):")
     c.setFont("Helvetica", 10)
     c.drawString(
-        70, height - 390, f"Nettokaltmiete (Grundmiete): {fmt(kaltmiete)} EUR"
+        70, height - 395, f"Nettokaltmiete (Grundmiete): {fmt(kaltmiete)} EUR"
     )
     c.drawString(
-        70, height - 408, f"Kalte Betriebskosten: {fmt(kalte_bk)} EUR"
+        70, height - 413, f"Kalte Betriebskosten: {fmt(kalte_bk)} EUR"
     )
     c.setFont("Helvetica-Bold", 10)
     c.drawString(
-        70, height - 428, f"Bruttokaltmiete (Summe): {fmt(bruttokalt)} EUR"
+        70, height - 433, f"Bruttokaltmiete (Summe): {fmt(bruttokalt)} EUR"
     )
 
     c.setFont("Helvetica", 10)
     c.drawString(
         70,
-        height - 448,
+        height - 453,
         f"Heizkosten / Warme Betriebskosten: {fmt(heizkosten)} EUR"
         f" (Heizungsart: {energietraeger})",
     )
     c.setFont("Helvetica-Bold", 10)
     c.drawString(
-        70, height - 468, f"Gesamte Bruttowarmmiete: {fmt(bruttowarm)} EUR"
+        70, height - 473, f"Gesamte Bruttowarmmiete: {fmt(bruttowarm)} EUR"
     )
-    c.drawString(70, height - 486, f"Mietkaution: {fmt(kaution)} EUR")
+    c.drawString(70, height - 491, f"Mietkaution: {fmt(kaution)} EUR")
 
     # Prüf-Ergebnis
     c.setFont("Helvetica-Bold", 10)
@@ -162,27 +165,27 @@ def generate_pdf(
             f" RICHTWERT (Höchstgrenze: {fmt(max_erlaubt_kalt)} EUR)"
         )
 
-    c.drawString(50, height - 525, ergebnis_text)
+    c.drawString(50, height - 530, ergebnis_text)
     c.setFillColorRGB(0, 0, 0)
 
     # Hinweis
     c.setFont("Helvetica-Oblique", 9)
     c.drawString(
         50,
-        height - 560,
+        height - 565,
         "Hinweis: Gemäß Richtlinie wird die Angemessenheit primär über die"
         " Bruttokaltmiete",
     )
     c.drawString(
         50,
-        height - 575,
+        height - 580,
         "sowie den Bundesheizspiegel für die Heizkosten bewertet.",
     )
 
     # Unterschrift
     c.setFont("Helvetica", 10)
-    c.drawString(50, height - 620, "Mit freundlichen Grüßen")
-    c.drawString(50, height - 655, "KARE-Immobilien")
+    c.drawString(50, height - 625, "Mit freundlichen Grüßen")
+    c.drawString(50, height - 660, "KARE-Immobilien")
 
     c.showPage()
     c.save()
