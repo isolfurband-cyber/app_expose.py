@@ -65,7 +65,6 @@ def generate_pdf(
     # Logo oben links einfügen (falls vorhanden)
     logo_path = "logo.png"
     if os.path.exists(logo_path):
-        #drawImage(image, x, y, width, height)
         c.drawImage(logo_path, 50, height - 50, width=110, height=35, preserveAspectRatio=True, mask='auto')
 
     # Briefkopf / Absender-Text rechts daneben / darunter
@@ -198,20 +197,6 @@ st.markdown(
     "Prüfung nach dem **Leitfaden der Stadt Gera (gültig ab 01.01.2026)**."
 )
 
-# Logo beim Start automatisch zwischenspeichern, falls im Verzeichnis vorhanden
-# (Alternativ können Sie das Logo hier auch per st.file_uploader hochladen lassen)
-logo_source =[cite: 3]  # Referenziert das mitgelieferte Logo
-# Falls das Bild direkt im Workspace liegt, speichern wir es als logo.png für ReportLab ab:
-try:
-    import pathlib
-    # Suchen nach der hochgeladenen Bilddatei im Kontext
-    # Das System hat das Bild 'kare_logo.png' übergeben, wir sichern es ab:
-    with open("logo.png", "wb") as f:
-        # Falls das Bild übergeben wurde, speichern wir es
-        pass # Die Umgebung stellt das Bild bereit
-except Exception:
-    pass
-
 with st.form("expose_form"):
     st.subheader("1. Objektdaten")
     col1, col2 = st.columns(2)
@@ -259,18 +244,15 @@ with st.form("expose_form"):
     )
 
 if submitted:
-    # Umwandlung der Komma-Eingaben in Zahlen für die Logik
     qm = parse_de_float(qm_input, 45.0)
     kaltmiete = parse_de_float(kaltmiete_input, 220.0)
     kalte_bk = parse_de_float(kalte_bk_input, 80.0)
     heizkosten = parse_de_float(heizkosten_input, 70.0)
     kaution = parse_de_float(kaution_input, 660.0)
 
-    # Berechnungen
     bruttokalt = kaltmiete + kalte_bk
     bruttowarm = bruttokalt + heizkosten
 
-    # Richtwert ermitteln basierend auf der offiziellen Tabelle für Bruttokaltmiete
     if personen <= 5:
         max_qm_erlaubt = RICHTLINIEN_GERA[personen]["max_qm"]
         max_brutto_erlaubt = RICHTLINIEN_GERA[personen]["max_bruttokalt"]
@@ -278,7 +260,6 @@ if submitted:
         max_qm_erlaubt = 105 + (personen - 5) * WEITERE_PERSON_QM
         max_brutto_erlaubt = 765.45 + (personen - 5) * WEITERE_PERSON_BETRAG
 
-    # Angemessenheitsprüfung
     is_angemessen_kalt = bruttokalt <= max_brutto_erlaubt
 
     st.markdown("---")
@@ -315,7 +296,6 @@ if submitted:
             f" {fmt(max_brutto_erlaubt)} EUR)."
         )
 
-    # PDF Download Button bereitstellen
     pdf_file = generate_pdf(
         strasse,
         hausnummer,
