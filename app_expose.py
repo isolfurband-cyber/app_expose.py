@@ -31,7 +31,6 @@ def fmt(val):
 # Hilfsfunktion um Text-Eingaben mit Komma sicher in Float umzuwandeln
 def parse_de_float(val_str, default=0.0):
     try:
-        # Leerzeichen entfernen und Komma durch Punkt ersetzen für Python-Berechnung
         cleaned = val_str.strip().replace(".", "").replace(",", ".")
         return float(cleaned)
     except ValueError:
@@ -45,6 +44,7 @@ def generate_pdf(
     strasse,
     hausnummer,
     plz_ort,
+    mieter_name,
     personen,
     raeume,
     qm,
@@ -90,53 +90,57 @@ def generate_pdf(
 
     c.setFont("Helvetica", 10)
     c.drawString(50, height - 165, "Sehr geehrte Damen und Herren,")
+    
+    # Text mit Mietername
+    mieter_text = mieter_name if mieter_name.strip() else "[Name des Mieters]"
     c.drawString(
         50,
         height - 180,
-        "für den oben genannten Mietinteressenten bieten wir hiermit folgende Mietwohnung an:",
+        f"für den Mietinteressenten {mieter_text} bieten wir hiermit folgende Mietwohnung an:",
     )
 
-    # Box mit Objektdaten
-    c.rect(50, height - 325, width - 100, 115)
+    # Box mit Objektdaten (leicht angepasst für Mietername)
+    c.rect(50, height - 340, width - 100, 130)
     c.setFont("Helvetica-Bold", 10)
-    c.drawString(70, height - 205, "Objektdaten & Anschrift:")
+    c.drawString(70, height - 205, "Objektdaten & Interessent:")
     c.setFont("Helvetica", 10)
+    c.drawString(70, height - 225, f"Mietinteressent(in): {mieter_text}")
     c.drawString(
-        70, height - 225, f"Straße & Hausnummer: {strasse} {hausnummer}"
+        70, height - 245, f"Straße & Hausnummer: {strasse} {hausnummer}"
     )
-    c.drawString(70, height - 245, f"Ort: {plz_ort}")
+    c.drawString(70, height - 265, f"Ort: {plz_ort}")
     c.drawString(
-        70, height - 265, f"Wohnungsgröße: {fmt(qm)} m² ({raeume} Räume)"
+        70, height - 285, f"Wohnungsgröße: {fmt(qm)} m² ({raeume} Räume)"
     )
-    c.drawString(70, height - 285, f"Haushaltsgröße: {personen} Person(en)")
+    c.drawString(70, height - 305, f"Haushaltsgröße: {personen} Person(en)")
 
     # Finanzielle Details & Angemessenheit
     c.setFont("Helvetica-Bold", 10)
-    c.drawString(50, height - 350, "Kosten der Unterkunft (KdU):")
+    c.drawString(50, height - 365, "Kosten der Unterkunft (KdU):")
     c.setFont("Helvetica", 10)
     c.drawString(
-        70, height - 370, f"Nettokaltmiete (Grundmiete): {fmt(kaltmiete)} EUR"
+        70, height - 385, f"Nettokaltmiete (Grundmiete): {fmt(kaltmiete)} EUR"
     )
     c.drawString(
-        70, height - 388, f"Kalte Betriebskosten: {fmt(kalte_bk)} EUR"
+        70, height - 403, f"Kalte Betriebskosten: {fmt(kalte_bk)} EUR"
     )
     c.setFont("Helvetica-Bold", 10)
     c.drawString(
-        70, height - 408, f"Bruttokaltmiete (Summe): {fmt(bruttokalt)} EUR"
+        70, height - 423, f"Bruttokaltmiete (Summe): {fmt(bruttokalt)} EUR"
     )
 
     c.setFont("Helvetica", 10)
     c.drawString(
         70,
-        height - 428,
+        height - 443,
         f"Heizkosten / Warme Betriebskosten: {fmt(heizkosten)} EUR"
         f" (Heizungsart: {energietraeger})",
     )
     c.setFont("Helvetica-Bold", 10)
     c.drawString(
-        70, height - 448, f"Gesamte Bruttowarmmiete: {fmt(bruttowarm)} EUR"
+        70, height - 463, f"Gesamte Bruttowarmmiete: {fmt(bruttowarm)} EUR"
     )
-    c.drawString(70, height - 466, f"Mietkaution: {fmt(kaution)} EUR")
+    c.drawString(70, height - 481, f"Mietkaution: {fmt(kaution)} EUR")
 
     # Prüf-Ergebnis
     c.setFont("Helvetica-Bold", 10)
@@ -153,27 +157,27 @@ def generate_pdf(
             f" RICHTWERT (Höchstgrenze: {fmt(max_erlaubt_kalt)} EUR)"
         )
 
-    c.drawString(50, height - 505, ergebnis_text)
+    c.drawString(50, height - 520, ergebnis_text)
     c.setFillColorRGB(0, 0, 0)
 
     # Hinweis
     c.setFont("Helvetica-Oblique", 9)
     c.drawString(
         50,
-        height - 540,
+        height - 555,
         "Hinweis: Gemäß Richtlinie wird die Angemessenheit primär über die"
         " Bruttokaltmiete",
     )
     c.drawString(
         50,
-        height - 555,
+        height - 570,
         "sowie den Bundesheizspiegel für die Heizkosten bewertet.",
     )
 
     # Unterschrift
     c.setFont("Helvetica", 10)
-    c.drawString(50, height - 600, "Mit freundlichen Grüßen")
-    c.drawString(50, height - 635, "KARE-Immobilien")
+    c.drawString(50, height - 615, "Mit freundlichen Grüßen")
+    c.drawString(50, height - 650, "KARE-Immobilien")
 
     c.showPage()
     c.save()
@@ -185,7 +189,7 @@ def generate_pdf(
 
 st.markdown("### 🏢 KARE-Immobilien — Jobcenter Exposé & Angemessenheitsprüfer")
 st.markdown(
-    "Prüfung nach dem **Leitfaden der Stadt Gera (gültig ab 01.01.2026)**[cite: 1]."
+    "Prüfung nach dem **Leitfaden der Stadt Gera (gültig ab 01.01.2026)**."
 )
 
 with st.form("expose_form"):
@@ -198,6 +202,9 @@ with st.form("expose_form"):
         plz_ort = st.text_input("PLZ / Ort", "07545 Gera")
 
     st.subheader("2. Mieter- & Wohnungsdaten")
+    
+    mieter_name = st.text_input("Name des Mietinteressenten", placeholder="Vor- und Nachname")
+
     col3, col4, col5 = st.columns(3)
     with col3:
         personen = st.number_input(
@@ -278,14 +285,14 @@ if submitted:
         st.success(
             f"✅ **Bruttokaltmiete ist ANGESESSEN!** Mit {fmt(bruttokalt)} EUR"
             f" liegt sie unter dem Höchstwert von {fmt(max_brutto_erlaubt)} EUR"
-            f" für einen {personen}-Personen-Haushalt[cite: 1]."
+            f" für einen {personen}-Personen-Haushalt."
         )
     else:
         st.error(
             f"❌ **Bruttokaltmiete überschreitet den Richtwert** für einen"
             f" {personen}-Personen-Haushalt um"
             f" {fmt(bruttokalt - max_brutto_erlaubt)} EUR (Erlaubt sind max."
-            f" {fmt(max_brutto_erlaubt)} EUR)[cite: 1]."
+            f" {fmt(max_brutto_erlaubt)} EUR)."
         )
 
     # PDF Download Button bereitstellen
@@ -293,6 +300,7 @@ if submitted:
         strasse,
         hausnummer,
         plz_ort,
+        mieter_name,
         personen,
         raeume,
         qm,
